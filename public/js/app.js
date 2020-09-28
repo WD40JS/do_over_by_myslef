@@ -1,10 +1,10 @@
 let ExpenseController = (() => {
-    let total = 0, savings = 0, expenses = 0, investments = 0;
+    let total = 0, income = 0, expenses = 0, investments = 0;
 
     return {
         inputEntry(userInput) {
-            if (userInput['expenseType'] === 'savings') {
-                savings += userInput['value'];
+            if (userInput['expenseType'] === 'income') {
+                income += userInput['value'];
                 total += userInput['value'];
             }
             if (userInput['expenseType'] === 'investment') {
@@ -17,8 +17,8 @@ let ExpenseController = (() => {
             }
         },
 
-        getSavingsData() {
-            return savings;
+        getIncomeData() {
+            return income;
         },
 
         getExpensesData() {
@@ -37,7 +37,7 @@ let ExpenseController = (() => {
 })();
 
 let UIController = (() => {
-    let expenseType = 'savings';
+    let expenseType = 'income';
 
     let HTMLStrings = {
         inExpenseDescription: '.input-expense-description',
@@ -46,7 +46,7 @@ let UIController = (() => {
         expenseList: '.expense-list',
         currentMonth: '#current-month',
         typeExpense: '#type-expense',
-        typeSavings: '#type-savings',
+        typeIncome: '#type-income',
         typeInvestment: '#type-investment',
         trackingText: '.tracking-text',
         expenseChart: '#expense-chart',
@@ -78,7 +78,7 @@ let UIController = (() => {
             console.log('here', type);
             this.expenseType = type;
             let emoji ="💰";
-            if (type === 'savings') {
+            if (type === 'income') {
                 emoji ="💰";
                 if (document.querySelector(HTMLStrings.btnSubmitExpense).classList.contains('btn-warning')) {
                     document.querySelector(HTMLStrings.btnSubmitExpense).classList.remove('btn-warning');
@@ -125,7 +125,7 @@ let UIController = (() => {
                 description: document.querySelector(HTMLStrings.inExpenseDescription).value,
                 value: parseInt(document.querySelector(HTMLStrings.inExpenseValue).value),
                 date: new Date().toLocaleDateString(),
-                expenseType: this.expenseType ? this.expenseType : 'savings'
+                expenseType: this.expenseType ? this.expenseType : 'income'
             }
         },
 
@@ -133,12 +133,12 @@ let UIController = (() => {
             let html, element;
             element = HTMLStrings.expenseList;
 
-            if (inputObj['expenseType'] === 'savings') {
-                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-saving fs-15"> ₹ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
+            if (inputObj['expenseType'] === 'income') {
+                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-income fs-15"> $ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
             } else if (inputObj['expenseType'] === 'expense') {
-                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-cost fs-15"> ₹ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
+                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-cost fs-15"> $ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
             } else if (inputObj['expenseType'] === 'investment') {
-                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-investment fs-15"> ₹ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
+                html = '<div class="bottom-border"> <div class="row expense-row"><div class="col-2 expense-date fs-15">' + inputObj['date'] + ' </div><div class="col-8 expense-text fs-15"> ' + inputObj['description'] + ' </div><div class="col-2 expense-value expense-investment fs-15"> $ ' + this.numberFormat(inputObj['value']) + ' </div></div>'
             }
 
             // Add the new element
@@ -156,23 +156,23 @@ let UIController = (() => {
                 if (document.querySelector(HTMLStrings.monthBudget).classList.contains('expense-cost')) {
                     document.querySelector(HTMLStrings.monthBudget).classList.remove('expense-cost');
                 }
-                document.querySelector(HTMLStrings.monthBudget).classList.add('expense-saving');
+                document.querySelector(HTMLStrings.monthBudget).classList.add('expense-income');
             } else {
-                if (document.querySelector(HTMLStrings.monthBudget).classList.contains('expense-saving')) {
-                    document.querySelector(HTMLStrings.monthBudget).classList.remove('expense-saving');
+                if (document.querySelector(HTMLStrings.monthBudget).classList.contains('expense-income')) {
+                    document.querySelector(HTMLStrings.monthBudget).classList.remove('expense-income');
                 }
                 document.querySelector(HTMLStrings.monthBudget).classList.add('expense-cost');
             }
         },
 
-        displayChart(savings = 0, expenses = 0, investments = 0) {
+        displayChart(income = 0, expenses = 0, investments = 0) {
             let ctx = document.querySelector(HTMLStrings.expenseChart);
             let expenseChart = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'pie',
                 data: {
-                    labels: ['Savings', 'Expenses', 'Investments'],
+                    labels: ['Income', 'Expenses', 'Investments'],
                     datasets: [{
-                        data: [savings, expenses, investments],
+                        data: [income, expenses, investments],
                         backgroundColor: [
                             'rgba(32, 137, 56, 1)',
                             'rgba(255, 84, 98, 1)',
@@ -194,18 +194,22 @@ let UIController = (() => {
 })();
 
 ((UIController, ExpenseController) => {
+    let dropDown = document.getElementById('dropdownMenu3');
 
     let HTMLStrings = UIController.getHTMLStrings();
     let setupEventListeners = () => {
         document.querySelector(HTMLStrings.btnSubmitExpense).addEventListener('click', addExpense);
         document.querySelector(HTMLStrings.typeExpense).addEventListener('click', () => {
             setExpenseType('expense')
+            dropDown.textContent = "Expense"
         });
         document.querySelector(HTMLStrings.typeInvestment).addEventListener('click', () => {
             setExpenseType('investment')
+            dropDown.textContent = "Business"
         });
         document.querySelector(HTMLStrings.typeSavings).addEventListener('click', () => {
-            setExpenseType('savings')
+            setExpenseType('income')
+            dropDown.textContent = "Personal"
         });
     };
 
@@ -222,7 +226,7 @@ let UIController = (() => {
             UIController.addListItem(input);
             ExpenseController.inputEntry(input);
             UIController.updateOverallTotal(ExpenseController.getTotalData());
-            UIController.displayChart(ExpenseController.getSavingsData(), ExpenseController.getExpensesData(),
+            UIController.displayChart(ExpenseController.getIncomeData(), ExpenseController.getExpensesData(),
                 ExpenseController.getInvestmentData());
         }
     }
