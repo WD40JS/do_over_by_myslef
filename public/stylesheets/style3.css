@@ -1,0 +1,25 @@
+body, html {
+  
+    height: 100%;
+  
+    /* The image used */
+    background-image: url("./images/home.jpg");
+  
+    
+  
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  h2 {
+    
+    text-align: left;
+  
+  
+  }
+  .item-6{
+  margin-top: 100px;
+  float: right;
+  
+  }
